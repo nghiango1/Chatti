@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, render_template
 from room import RoomBase
 from user import UserBase
 
@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'Hello, this is a simple chat room!'
+    return render_template('index.html')
 
 
 @app.route('/api/user', methods=['GET'])
