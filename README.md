@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 Start server, after activating `(venv)` venv (Already hardcode config as `debug` mode)
 ```sh
-python main.py
+python src/main.py
 ```
 
 ### Dev 
