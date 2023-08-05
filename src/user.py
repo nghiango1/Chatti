@@ -1,4 +1,5 @@
 from ulti.Singeleton import Singleton
+from typing import Dict, Optional
 
 
 class User:
@@ -7,7 +8,6 @@ class User:
             self.roles = ["admin"]
         self.username = username
         self.password = password
-        self.password = password
 
     def __str__(self):
         return f"User name {self.username}\n"
@@ -15,15 +15,13 @@ class User:
 
 class UserBase(metaclass=Singleton):
     def __init__(self):
-        self.users = {}
+        self.users: Dict[str, User] = {}
         self.addUser("admin", isAdmin=True)
         self.addUser("user01")
         self.addUser("user02")
 
-    def getUser(self, name) -> User:
-        if name in self.users:
-            return self.users[name]
-        return None
+    def getUser(self, name: str) -> Optional[User]:
+        return self.users.get(name, None)
 
     def getUserList(self):
         return self.users.keys()
@@ -32,9 +30,9 @@ class UserBase(metaclass=Singleton):
         return self.users
 
     def addUser(self, name, password="1", isAdmin=False):
-        if name in self.users:
+        if self.users.__contains__(name):
             return
-        self.users[name] = User(name, password, isAdmin)
+        self.users[name] = User(name, password, isAdmin=isAdmin)
 
     def __str__(self):
         ub = ""

@@ -1,5 +1,5 @@
 import functools
-from flask import (Flask, jsonify, request, abort, send_from_directory,
+from flask import (Flask, jsonify, request, abort,
                    render_template, g, Blueprint, flash,
                    redirect, session, url_for)
 
@@ -139,6 +139,8 @@ def send_room_id(room_id: int):
         abort(404)
     username = request.args.get("user")
     ub = UserBase()
+    if username is None:
+        abort(401)
     u = ub.getUser(username)
     if u is None:
         abort(401)

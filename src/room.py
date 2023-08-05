@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Dict
 from ulti.Singeleton import Singleton
-from user import UserBase
+from user import UserBase, User
 from time import time
 from ulti.TimeToString import timeToString
 
@@ -30,7 +30,7 @@ class Message():
 
 
 class Room():
-    def __init__(self, id):
+    def __init__(self, id: int, users: User = [], message: List[Message] = []):
         self.message: List[Message] = []
         self.id = id
         self.users = []
@@ -39,7 +39,7 @@ class Room():
         return self.message
 
     def join(self, username: str):
-        if username in self.users:
+        if self.users.__contains__(username):
             return
         self.users.append(username)
 
@@ -65,12 +65,12 @@ class Room():
 
 class RoomBase(metaclass=Singleton):
     def __init__(self):
-        self.rooms = {0: Room(0)}
+        self.rooms: Dict[int, Room] = {0: Room(0)}
         self.currId = 0
 
     def createRoom(self):
         self.currId += 1
-        self.rooms.append(Room(self.currId))
+        self.rooms[self.currId] = Room(self.currId)
         return self.currId
 
     def getRoom(self, id) -> Room:

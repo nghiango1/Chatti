@@ -1,11 +1,14 @@
 {
-  "name": "ChattingChit",
+  "name": "chattingchit",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "css": "npx tailwindcss -i ./styles.css -o static/tailwind.css",
-    "css-watch": "npx tailwindcss -i ./styles.css -o static/tailwind.css --watch"
+    "css-watch": "npx tailwindcss -i ./styles.css -o static/tailwind.css --watch",
+    "gen-req": "rm requirements.txt ; pip freeze > requirements.txt",
+    "ins-req": "pip install -r requirements.txt",
+    "dev": "python src/main.py"
   },
   "keywords": [],
   "author": "",
