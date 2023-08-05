@@ -51,9 +51,79 @@ def get_user():
     return jsonify(list(ub.getUserList()))
 
 
+@app.route('/api/createroom', methods=['GET'])
+@admin_required
+def create_room():
+    rb = RoomBase()
+    id = rb.createRoom()
+    return jsonify({"message": "success",'room_id': id})
+
+
 @app.route('/api/iam', methods=['GET'])
 def whoami():
-    return jsonify({'user': session['user_id']})
+    return jsonify({'user': session['user_id'], 'roles': g.roles, 'isAdmin': g.isAdmin})
+
+
+@app.route('/api/room', methods=['GET'])
+def get_room():
+    rb = RoomBase()
+    return jsonify(list(rb.getRoomList()))
+
+
+@app.route('/api/room/<int:room_id>', methods=['GET'])
+def get_room_id(room_id: int):
+    rb = RoomBase()
+    r = rb.getRoom(room_id)
+    if r is None:
+        abort(404)
+    s = {}
+    s['user'] = r.getUsers()
+    s['data'] = r.toDict()
+    return jsonify(s)
+
+
+@app.route('/api/room/<int:room_id>/send', methods=['GET'])
+def send_room_id(room_id: int):
+    rb = RoomBase()
+    r = rb.getRoom(room_id)
+    if r is None:
+        abort(404)
+    username = request.args.get("user")
+    ub = UserBase()
+    if username is None:
+        abort(401)
+    u = ub.getUser(username)
+    if u is None:
+        abort(401)
+    message = Message(username, request.args.get("message"))
+    r.recv(message)
+    return jsonify({"message": "Room recv message"})
+
+
+def getRoomAndUrlList():
+    rb = RoomBase()
+    roomWithUrl = [(rid, f"/room/{rid}") for rid in rb.getRoomList()]
+    return roomWithUrl
+
+
+@app.route('/')
+def index():
+    rb = RoomBase()
+    r = rb.getRoom(0)
+    session['room_id'] = 0
+    message = r.getMessage()
+    return render_template('index.html', message=message, room=getRoomAndUrlList(), curr = 0)
+
+
+@app.route('/room/<int:room_id>')
+def room(room_id: int):
+    rb = RoomBase()
+    r = rb.getRoom(room_id)
+    if r is None:
+        abort(404)
+    session['room_id'] = room_id
+    message = r.getMessage()
+    return render_template('index.html', message=message, room=getRoomAndUrlList(), curr = room_id)
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -119,7 +189,9 @@ def load_logged_in_user():
         ub = UserBase()
         u = ub.getUser(user_id)
         g.user = u
+        g.isAdmin = False
         if u.roles:
+            g.roles = u.roles
             g.isAdmin = u.roles.__contains__("admin")
 
 
@@ -127,50 +199,6 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
-
-@app.route('/api/room', methods=['GET'])
-def get_room():
-    rb = RoomBase()
-    return jsonify(list(rb.getRoomList()))
-
-
-@app.route('/api/room/<int:room_id>', methods=['GET'])
-def get_room_id(room_id: int):
-    rb = RoomBase()
-    r = rb.getRoom(room_id)
-    if r is None:
-        abort(404)
-    s = {}
-    s['user'] = r.getUsers()
-    s['data'] = r.toDict()
-    return jsonify(s)
-
-
-@app.route('/api/room/<int:room_id>/send', methods=['GET'])
-def send_room_id(room_id: int):
-    rb = RoomBase()
-    r = rb.getRoom(room_id)
-    if r is None:
-        abort(404)
-    username = request.args.get("user")
-    ub = UserBase()
-    if username is None:
-        abort(401)
-    u = ub.getUser(username)
-    if u is None:
-        abort(401)
-    message = Message(username, request.args.get("message"))
-    r.recv(message)
-    return jsonify({"message": "Room recv message"})
-
-
-@app.route('/')
-def index():
-    rb = RoomBase()
-    r = rb.getRoom(0)
-    message = r.getMessage()
-    return render_template('index.html', message=message)
 
 
 connected_users = set()
@@ -192,9 +220,10 @@ def soc_login_required(view):
 @soc_login_required
 def handle_message(message):
     rb = RoomBase()
-    r = rb.getRoom(0)
+    r = rb.getRoom(session['room_id'])
+    if r is None:
+        abort(404)
     m = Message(session['user_id'], message)
-
     r.recv(m)
     send(m.toHtml(), broadcast=True)
 

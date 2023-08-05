@@ -1,20 +1,25 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %} WebSocket Chat Room {% endblock %}</h1>
+{% block title %} WebSocket Chat Room {% endblock %}
 {% endblock %}
 
 
 {% block content %}
-<div class="font-serif">
-        <div class="flex w-full flex-col">
-            <div class="w-full relative flex my-2">
-                <input name="message_bar" class="border p-1 m-0 flex flex-1" type="text"
-                    id="inputMessage">
-                <div class="flex bg-blue-200 border p-1 ml-4  rounded-sm" onclick="sendMessage()">Send</div>
-            </div>
+<div class="w-full flex flex-col h-full">
+    <div class="flex">
+        {% for r, u in room %}
+        <a href={{ u }} class="px-2 py-1 border {% if r != curr %}bg-gray-300{% endif %}">Room {{ r }}</a>
+        {% endfor %}
+        <div class="bg-gray-300 flex-auto flex"></div>
+    </div>
+    <div class="flex w-full flex-col">
+        <div class="w-full relative flex my-2">
+            <input name="message_bar" class="border p-1 m-0 flex flex-1" type="text" id="inputMessage">
+            <div class="flex bg-blue-200 border p-1 ml-4  rounded-sm" onclick="sendMessage()">Send</div>
         </div>
-    <div class="font-serif overflow-y-scroll break-words whitespace-normal h-screen" id="messages">
+    </div>
+    <div class="overflow-y-scroll break-words whitespace-normal flex-1" id="messages">
         {% for m in message[::-1] %}
         <p>({{ m.getTime() }}) <strong>{{ m.username }}</strong>: {{m.message}}</p>
         {% endfor %}

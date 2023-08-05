@@ -78,7 +78,7 @@ class RoomBase(metaclass=Singleton):
             return None
         return self.rooms[id]
 
-    def getRoomList(self):
+    def getRoomList(self) -> List[int]:
         return self.rooms.keys()
 
     def delRoom(self, id):

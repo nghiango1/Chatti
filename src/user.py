@@ -6,7 +6,7 @@ class User:
     def __init__(self, username, password, isAdmin=False):
         self.roles = []
         if isAdmin:
-            self.roles.append(["admin"])
+            self.roles.append("admin")
         self.username = username
         self.password = password
 

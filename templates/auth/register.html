@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
+{% block title %}Register{% endblock %}
 {% endblock %}
 
 {% block content %}
-  <form method="post" class="mt-4 mx-auto flex flex-col max-w-xs">
-      <label class="mb-2" for="username">Username</label>
-      <input class="border mb-4" name="username" id="username" required>
-      <label for="password" class="mb-2">Password</label>
-      <input class="border mb-4" type="password" name="password" id="password" required>
-      <button class="bg-blue-200 p-2 border" type="submit" value="Log In">Register</button>
-  </form>
+<form method="post" class="mt-4 mx-auto flex flex-col max-w-xs">
+    <label class="mb-2" for="username">Username</label>
+    <input class="border mb-4 p-2" name="username" id="username" required>
+    <label for="password" class="mb-2">Password</label>
+    <input class="border mb-4 p-2" type="password" name="password" id="password" required>
+    <button class="bg-blue-200 p-2 border" type="submit" value="Log In">Register</button>
+</form>
 {% endblock %}

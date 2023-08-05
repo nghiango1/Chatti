@@ -14,6 +14,12 @@ A in-memory only back-end chating app with simple UI
 - `/auth/login` : Loging
 - `/auth/register` : Create new user
 
+## Api
+- `/api/iam` : Return user infomation (name and roles) 
+- `/api/user` : Get all user 
+- `/api/room` : Get all room and it's message
+- `/api/createroom` : Create new room and return it's id
+
 ## Using
 - _Backend_: python, flask (socketio, template, authenticate decoration)
 - _Frontend_: html (flask tenplate), js (for socket), tailwindcss
