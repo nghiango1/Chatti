@@ -1,8 +1,8 @@
 from typing import List, Dict
-from ulti.Singeleton import Singleton
-from user import UserBase, User
+from src.ulti.Singeleton import Singleton
+from src.user import UserBase, User
 from time import time
-from ulti.TimeToString import timeToString
+from src.ulti.TimeToString import timeToString
 
 
 class Message():

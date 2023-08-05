@@ -3,9 +3,9 @@ from flask import (Flask, jsonify, request, abort,
                    render_template, g, Blueprint, flash,
                    redirect, session, url_for)
 
-from flask_socketio import SocketIO, send, Namespace, emit
-from room import RoomBase, Message
-from user import UserBase
+from flask_socketio import SocketIO, send, emit
+from src.room import RoomBase, Message
+from src.user import UserBase
 
 
 app = Flask(__name__)
@@ -20,7 +20,32 @@ def add_cache_control(response):
     return response
 
 
+def admin_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        if not g.isAdmin:
+            abort(401)
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
 @app.route('/api/user', methods=['GET'])
+@admin_required
 def get_user():
     ub = UserBase()
     return jsonify(list(ub.getUserList()))
@@ -94,23 +119,14 @@ def load_logged_in_user():
         ub = UserBase()
         u = ub.getUser(user_id)
         g.user = u
+        if u.roles:
+            g.isAdmin = u.roles.__contains__("admin")
 
 
 @bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-
-        return view(**kwargs)
-
-    return wrapped_view
 
 
 @app.route('/api/room', methods=['GET'])
@@ -161,27 +177,6 @@ connected_users = set()
 soc = SocketIO(app)
 
 
-class RoomNamespace(Namespace):
-    def on_connect(self):
-        # Handle new connection to the room
-        room_id = self.room_id
-        print(f"User connected to room {room_id}")
-
-    def on_disconnect(self):
-        # Handle disconnection from the room
-        room_id = self.room_id
-        print(f"User disconnected from room {room_id}")
-
-    def on_message(self, message):
-        # Handle incoming messages in the room
-        room_id = self.room_id
-        print(f"Message received in room {room_id}: {message}")
-        self.emit('message', {'message': message}, room=self.room_id)
-
-
-soc.on_namespace(RoomNamespace('/room/<room_id>'))
-
-
 def soc_login_required(view):
     @functools.wraps(view)
     def wrapped_view(*args, **kwargs):
@@ -201,7 +196,6 @@ def handle_message(message):
     m = Message(session['user_id'], message)
 
     r.recv(m)
-    print(r)
     send(m.toHtml(), broadcast=True)
 
 
@@ -219,14 +213,14 @@ def handle_leave(data):
     send(username + ' has left the chat.', broadcast=True)
 
 
-def main():
-    app.register_blueprint(bp)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-    )
+app.register_blueprint(bp)
+app.config.from_mapping(
+    SECRET_KEY='dev',
+)
 
+
+def main():
     soc.run(app, host='0.0.0.0', debug=True)
-    pass
 
 
 if __name__ == "__main__":

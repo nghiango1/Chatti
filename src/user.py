@@ -1,11 +1,12 @@
-from ulti.Singeleton import Singleton
+from src.ulti.Singeleton import Singleton
 from typing import Dict, Optional
 
 
 class User:
     def __init__(self, username, password, isAdmin=False):
+        self.roles = []
         if isAdmin:
-            self.roles = ["admin"]
+            self.roles.append(["admin"])
         self.username = username
         self.password = password
 

@@ -21,6 +21,7 @@ A in-memory only back-end chating app with simple UI
 To generate my `requirement.txt`, I used pip freeze > requirements.txt
 
 ## How to use
+### Prod
 Install Requirement
 ```sh
 python -m venv venv
@@ -28,12 +29,14 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Start server, after activating `(venv)` venv (Already hardcode config as `debug` mode)
+Start server, after activating `(venv)` venv
 ```sh
-python src/main.py
+source venv/bin/activate
+pnpm start
 ```
 
 ### Dev 
+**Tailwind watch mode**
 `pnpm isn't nessesary, you can use `npm` or `yarn`. This is required just to install tailwindcss
 The tailwindcss need to be in watch mode so you can have the css file auto generate automaticaly on every change
 
@@ -42,9 +45,9 @@ The tailwindcss need to be in watch mode so you can have the css file auto gener
 ```sh
 pnpm css-watch
 ```
-
-Then open our `main.py`
-
+**Start debug server**
+You will want to use second session to start the server
 ```sh
-python main.py
+source venv/bin/activate
+pnpm dev
 ```
