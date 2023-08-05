@@ -20,7 +20,7 @@ class UserBase(metaclass=Singleton):
         self.addUser("user01")
         self.addUser("user02")
 
-    def getUser(self, name):
+    def getUser(self, name) -> User:
         if name in self.users:
             return self.users[name]
         return None

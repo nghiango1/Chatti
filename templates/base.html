@@ -1,0 +1,28 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - ChattingChit App</title>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'tailwind.css') }}">
+</head>
+
+<body class="antialiased text-blue-800 bg-white font-serif p-4 max-w-5xl my-auto mx-auto">
+    <nav class="flex items-center py-2 bg-gray-300">
+        <h1 class="flex-auto m-0 font-serif p-2">ChattingChit App</h1>
+        <ul class="flex font-serif p-2">
+            {% if g.user %}
+            <li><span class="p-1">{{ g.user['username'] }}</span>
+            <li><a class="p-1" href="{{ url_for('auth.logout') }}">Log Out</a>
+                {% else %}
+            <li><a class="p-1" href="{{ url_for('auth.register') }}">Register</a>
+            <li><a class="p-1" href="{{ url_for('auth.login') }}">Log In</a>
+                {% endif %}
+        </ul>
+    </nav>
+    <section class="mx-auto">
+        <header class="border border-gray-light flex items-end first:flex-auto">
+            {% block header %}{% endblock %}
+        </header>
+        {% block content %}{% endblock %}
+    </section>
+</body>

@@ -1,14 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Chat</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename= 'style/tailwind.css') }}">
-</head>
+{% block header %}
+<h1>{% block title %} WebSocket Chat Room {% endblock %}</h1>
+{% endblock %}
 
-<body>
-    <h1 class="text-3xl font-light text-white m-0">Welcome to ChattingChit chat app</h1>
-</body>
 
-</html>
+{% block content %}
+<div class="font-serif">
+        <div class="flex w-full flex-col">
+            <div class="w-full relative flex my-2">
+                <input name="message_bar" class="border p-1 m-0 flex flex-1" type="text"
+                    id="inputMessage">
+                <div class="flex bg-blue-200 border p-1 ml-4  rounded-sm" onclick="sendMessage()">Send</div>
+            </div>
+        </div>
+    <div class="font-serif overflow-y-scroll break-words whitespace-normal h-screen" id="messages">
+        {% for m in message[::-1] %}
+        <p>({{ m.getTime() }}) <strong>{{ m.username }}</strong>: {{m.message}}</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.4"></script>
+<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+<script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('message', function (data) {
+        var messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML = '<p>' + data + '</p>' + messagesDiv.innerHTML;
+    });
+
+    socket.on('alert', function (data) {
+        alert(data.message)
+        window.location.href = data.url
+    });
+
+    function sendMessage() {
+        var inputMessage = document.getElementById('inputMessage');
+        socket.send(inputMessage.value);
+        inputMessage.value = '';
+    }
+</script>
+{% endblock %}
