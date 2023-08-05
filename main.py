@@ -11,19 +11,12 @@ from user import UserBase
 app = Flask(__name__)
 
 
-@app.route('/static/<path:filename>')
-def serve_static_file(filename):
-    # Specify the path to your static files directory
-    static_dir = 'path/to/your/static/files'
-
-    # Send the file with appropriate cache control headers
-    response = send_from_directory(static_dir, filename)
-
-    # Set cache control headers to prevent caching
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-
+@app.after_request
+def add_cache_control(response):
+    if request.path.endswith('/static/tailwind.css'):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     return response
 
 
