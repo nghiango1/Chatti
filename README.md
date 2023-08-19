@@ -46,7 +46,7 @@ pnpm start
 `pnpm isn't nessesary, you can use `npm` or `yarn`. This is required just to install tailwindcss
 The tailwindcss need to be in watch mode so you can have the css file auto generate automaticaly on every change
 
-> The `static` route handle in `main.py` is writen so that every request will using fresh css file that generated from tailwindcli
+> The `static` route handle in `flask_app.py` is writen so that every request will using fresh css file that generated from tailwindcli
 
 ```sh
 pnpm css-watch

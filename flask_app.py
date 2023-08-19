@@ -188,6 +188,8 @@ def load_logged_in_user():
     else:
         ub = UserBase()
         u = ub.getUser(user_id)
+        if u is None:
+            abort(401)
         g.user = u
         g.isAdmin = False
         if u.roles:

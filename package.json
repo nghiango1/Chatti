@@ -8,8 +8,8 @@
         "css-watch": "npx tailwindcss -i ./styles.css -o static/tailwind.css --watch",
         "gen-req": "rm requirements.txt ; pip freeze > requirements.txt",
         "ins-req": "pip install -r requirements.txt",
-        "dev": "python main.py",
-        "start": "gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 main:app"
+        "dev": "python flask_app.py",
+        "start": "gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 flask_app:app"
     },
     "keywords": [],
     "author": "",
