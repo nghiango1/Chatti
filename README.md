@@ -1,5 +1,5 @@
 # ChattingChit
-A in-memory only back-end chating app with simple UI
+A in-memory only back-end chating app with UI
 
 ## Sample user:
 
