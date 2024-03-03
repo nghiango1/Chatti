@@ -1,4 +1,4 @@
-# ChattingChit
+# Chatti
 A in-memory only back-end chating app with UI
 
 ## Sample user:
